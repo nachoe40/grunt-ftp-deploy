@@ -2,8 +2,8 @@
 // Grunt Task File
 // ---------------
 //
-// Task: FTP Deploy
-// Description: Deploy code over FTP
+// Task: FTP Sync
+// Description: Sync code over FTP
 // Dependencies: jsftp
 //
 
@@ -275,7 +275,7 @@ module.exports = function (grunt) {
   }
 
   // The main grunt task
-  grunt.registerMultiTask('ftp-deploy', 'Deploy code over FTP', function () {
+  grunt.registerMultiTask('ftp-sync', 'Sync code over FTP', function () {
     var done = this.async();
 
     // Init

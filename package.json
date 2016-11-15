@@ -1,23 +1,23 @@
 {
-  "name": "grunt-ftp-deploy",
-  "description": "Deployment over FTP",
-  "version": "0.1.10",
-  "homepage": "https://github.com/zonak/grunt-ftp-deploy",
+  "name": "grunt-ftp-sync",
+  "description": "Sync files over FTP",
+  "version": "0.2.0",
+  "homepage": "https://github.com/nachoe40/grunt-ftp-sync",
   "author": {
-    "name": "Zoran Nakev",
-    "email": "zoran.nakev@gmail.com"
+    "name": "Ignacio Ezcaray",
+    "email": "nachoe40@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/zonak/grunt-ftp-deploy.git"
+    "url": "git://github.com/nachoe40/grunt-ftp-sync.git"
   },
   "bugs": {
-    "url": "https://github.com/zonak/grunt-ftp-deploy/issues"
+    "url": "https://github.com/nachoe40/grunt-ftp-sync/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/zonak/grunt-ftp-deploy/blob/master/LICENSE-MIT"
+      "url": "https://github.com/nachoe40/grunt-ftp-sync/blob/master/LICENSE-MIT"
     }
   ],
   "engines": {

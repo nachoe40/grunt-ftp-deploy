@@ -1,7 +1,7 @@
 'use strict';
 module.exports = function (grunt) {
   grunt.initConfig({
-    'ftp-deploy': {
+    'ftp-sync': {
       build: {
         auth: {
           host: 'localhost',
@@ -52,7 +52,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', [
     'clean',
     'pre',
-    'ftp-deploy',
+    'ftp-sync',
     'simplemocha',
     'post',
     'clean'

@@ -1,6 +1,6 @@
-# grunt-ftp-deploy [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][depstat-image]][depstat-url]
+# grunt-ftp-sync [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][depstat-image]][depstat-url]
 
-This is a [grunt](https://github.com/gruntjs/grunt) task for code deployment over the _ftp_ protocol.
+This is a [grunt](https://github.com/gruntjs/grunt) task for code sync over the _ftp_ protocol.
 
 These days _git_ is not only our goto code management tool but in many cases our deployment tool as well. But there are many cases where _git_ is not really fit for deployment:
 
@@ -21,13 +21,13 @@ This plugin requires Grunt `~0.4.0`
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
 ```shell
-npm install grunt-ftp-deploy --save-dev
+npm install grunt-ftp-sync --save-dev
 ```
 
 and load the task:
 
 ```javascript
-grunt.loadNpmTasks('grunt-ftp-deploy');
+grunt.loadNpmTasks('grunt-ftp-sync');
 ```
 
 ## Usage
@@ -35,7 +35,7 @@ grunt.loadNpmTasks('grunt-ftp-deploy');
 To use this task you will need to include the following configuration in your _grunt_ file:
 
 ```javascript
-'ftp-deploy': {
+'ftp-sync': {
   build: {
     auth: {
       host: 'server.com',
@@ -110,11 +110,11 @@ This task is built by taking advantage of the great work of Sergi Mansilla and h
  * 2013-11-22    v0.1.1    Added compatibility with `grunt` _0.4.2_ and switched to `jsftp` _1.2.x_.
  * 2013-08-26    v0.1.0    Switched to `jsftp` _1.1.x_.
 
-[npm-url]: https://npmjs.org/package/grunt-ftp-deploy
-[npm-image]: https://badge.fury.io/js/grunt-ftp-deploy.png
+[npm-url]: https://npmjs.org/package/grunt-ftp-sync
+[npm-image]: https://badge.fury.io/js/grunt-ftp-sync.png
 
-[travis-url]: http://travis-ci.org/zonak/grunt-ftp-deploy
-[travis-image]: https://secure.travis-ci.org/zonak/grunt-ftp-deploy.png?branch=master
+[travis-url]: http://travis-ci.org/zonak/grunt-ftp-sync
+[travis-image]: https://secure.travis-ci.org/zonak/grunt-ftp-sync.png?branch=master
 
-[depstat-url]: https://david-dm.org/zonak/grunt-ftp-deploy
-[depstat-image]: https://david-dm.org/zonak/grunt-ftp-deploy.png
+[depstat-url]: https://david-dm.org/zonak/grunt-ftp-sync
+[depstat-image]: https://david-dm.org/zonak/grunt-ftp-sync.png
