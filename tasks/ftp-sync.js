@@ -33,6 +33,7 @@ module.exports = function (grunt) {
   var forceVerbose;
   var forceUpload;
   var syncMode;
+  var destTimeAdjustmentMinutes;
 
   // A method for parsing the source location and storing the information into a suitably formated object
   function dirParseSync (startDir, result) {
@@ -119,8 +120,10 @@ module.exports = function (grunt) {
       }
       if (fileInfo) {
         var stat = fs.statSync(fpath);
+        var remoteMtime = Math.floor(stat.mtime.getTime()/1000) + destTimeAdjustmentMinutes*360;
+        var localMtime =  Math.floor(fileInfo.time/1000);
 
-        if (stat.size == fileInfo.size && stat.mtime.getTime() < fileInfo.time) {
+        if (stat.size == fileInfo.size && remoteMtime <= localMtime) {
           if (forceVerbose) {
             log.ok('Unchanged file: ' + fpath.grey);
           } else {
@@ -287,6 +290,7 @@ module.exports = function (grunt) {
 
     localRoot = Array.isArray(this.data.src) ? this.data.src[0] : this.data.src;
     remoteRoot = Array.isArray(this.data.dest) ? this.data.dest[0] : this.data.dest;
+    destTimeAdjustmentMinutes = this.data.destTimeAdjustmentMinutes || 0;
     authVals = getAuthVals(this.data.auth);
     exclusions = this.data.exclusions || [];
     keep = this.data.keep || [];
