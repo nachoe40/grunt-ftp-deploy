@@ -96,6 +96,18 @@ module.exports = function (grunt) {
     });
   }
 
+    function escapeRegExp(str) {
+        return str.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    }
+
+    function replaceAll(target, search, replacement) {
+        if (search != replacement) {
+            while (target.indexOf(search) != -1) {
+                target = target.replace(new RegExp(escapeRegExp(search), 'g'), replacement);
+            }
+        }
+    }
+
   // A method for getting info from remote path
   function ftpLs(remotePath, cb) {
     ftp.ls(remotePath, function (err, res) {
