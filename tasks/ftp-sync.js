@@ -183,10 +183,14 @@ module.exports = function (grunt) {
         });
     }
 
+    function escapeRegExp(str) {
+        return str.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    }
+
     function replaceAll(target, search, replacement) {
         if (search != replacement) {
             while (target.indexOf(search) != -1) {
-                target = target.replace(new RegExp(_.escapeRegExp(search), 'g'), replacement);
+                target = target.replace(new RegExp(escapeRegExp(search), 'g'), replacement);
             }
         }
         return target;
