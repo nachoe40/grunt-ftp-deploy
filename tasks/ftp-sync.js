@@ -33,6 +33,7 @@ module.exports = function (grunt) {
   var forceVerbose;
   var forceUpload;
   var syncMode;
+  var destSep;
 
   // A method for parsing the source location and storing the information into a suitably formated object
   function dirParseSync (startDir, result) {
@@ -52,7 +53,7 @@ module.exports = function (grunt) {
       grunt.warn(startDir + ' is not an existing location');
     }
 
-    // iterate throught the contents of the `startDir` location of the current iteration
+    // iterate through the contents of the `startDir` location of the current iteration
     files = fs.readdirSync(startDir);
     for (i = 0; i < files.length; i++) {
       currFile = startDir + path.sep + files[i];
@@ -82,7 +83,7 @@ module.exports = function (grunt) {
       if(err){
         ftp.raw.mkd(inPath, function (err) {
           if(err) {
-            log.error('Error creating new remote folder ' + inPath + ' --> ' + err);
+            grunt.fail.fatal('Error creating new remote folder ' + inPath + ' --> ' + err);
             cb(err);
           } else {
             log.ok('New remote folder created ' + inPath.yellow);
@@ -157,20 +158,20 @@ module.exports = function (grunt) {
           if (files.length === 0) {
             ftp.raw.rmd(dirPath, function (err) {
               if (err) {
-                log.error('Error deleting directory: ' + dirPath + ' -- ' + err);
+                grunt.fail.fatal('Error deleting directory: ' + dirPath + ' -- ' + err);
                 callback();
               } else {
-                log.error('Deleted directory: ' + dirPath);
+                log.ok('Deleted directory: ' + dirPath);
                 callback();
               }
             });
           } else {
             async.eachSeries(files, function (file, cb) {
-              var filePath = path.join(dirPath, file.name);
+              var filePath = destPathJoin(dirPath, file.name);
               if (file.type == 0) {
                 removeFile(filePath, cb);
               } else {
-                removeDir(path.join(filePath, '/'), cb);
+                removeDir(destPathJoin(filePath, destSep), cb);
               }
             }, function () {
               removeDir(dirPath, callback);
@@ -181,10 +182,52 @@ module.exports = function (grunt) {
     });
   }
 
+  function replaceAll(target, search, replacement) {
+      if( search != replacement ) {
+          while (target.indexOf(search) != -1) {
+              target = target.replace(new RegExp(_.escapeRegExp(search), 'g'), replacement);
+          }
+      }
+      return target;
+  }
+
+  function destPathNormalize(oldPath) {
+        var finalPath = path.normalize(oldPath);
+
+        if (destSep != path.sep) {
+            finalPath = replaceAll(finalPath, path.sep, destSep);
+        }
+        return finalPath;
+  }
+
+  function destPathJoin(a) {
+        var finalPath = "";
+        var args = Array.prototype.slice.call(arguments);
+        args.forEach(function (arg, index) {
+            if (index == 0) {
+                finalPath = arg;
+            } else {
+                finalPath += destSep + arg;
+            }
+        });
+        if (destSep != path.sep) {
+            finalPath = replaceAll(finalPath, path.sep, destSep);
+        }
+        finalPath = replaceAll(finalPath, destSep + destSep, destSep);
+
+        if (finalPath.length > 1) {
+            // remove trailing slash
+            if (finalPath[finalPath.length - 1] == destSep) {
+                finalPath = finalPath.slice(0, finalPath.length - 1);
+            }
+        }
+        return finalPath;
+  }
+
   function removeFile(filePath, callback) {
     ftp.raw.dele(filePath, function (err) {
       if (err) {
-        log.error('Error deleting file: ' + filePath.red + ' -- ' + err);
+        grunt.fail.fatal('Error deleting file: ' + filePath.red + ' -- ' + err);
         callback();
       } else {
         if (forceVerbose) {
@@ -204,8 +247,9 @@ module.exports = function (grunt) {
     }
     currPath = inPath;
     var files = toTransfer[inPath];
+    var r = destPathJoin(remoteRoot, inPath);
+    var remotePath = destPathNormalize(r);
 
-    var remotePath = path.normalize(path.join('/', remoteRoot, inPath));
     ftpCwd(remotePath, function (err) {
       ftpLs(remotePath, function (err, res) {
         if (err) {
@@ -222,7 +266,7 @@ module.exports = function (grunt) {
           if (syncMode) {
             async.eachSeries(currPathInfo, function (obj, cb1) {
               var fpath = path.normalize(path.join(localRoot, currPath, obj.name));
-              var remoteFile = path.normalize(path.join(remotePath, '/', obj.name, '/'));
+              var remoteFile = destPathNormalize(destPathJoin(remotePath, destSep, obj.name, destSep));
               try {
                 fs.statSync(fpath);
                 cb1();
@@ -287,6 +331,8 @@ module.exports = function (grunt) {
 
     localRoot = Array.isArray(this.data.src) ? this.data.src[0] : this.data.src;
     remoteRoot = Array.isArray(this.data.dest) ? this.data.dest[0] : this.data.dest;
+    destTimeAdjustmentMinutes = this.data.destTimeAdjustmentMinutes || 0;
+    destSep = this.data.destSep || '/';
     authVals = getAuthVals(this.data.auth);
     exclusions = this.data.exclusions || [];
     keep = this.data.keep || [];
