@@ -80,9 +80,9 @@ module.exports = function (grunt) {
 
     // A method for changing the remote working directory and creating one if it doesn't already exist
     function ftpCwd(inPath, cb) {
-        ftp.raw.cwd(inPath, function (err) {
+        ftp.raw( "cwd", inPath, function (err) {
             if (err) {
-                ftp.raw.mkd(inPath, function (err) {
+                ftp.raw( "mkd", inPath, function (err) {
                     if (err) {
                         grunt.fail.fatal('Error creating new remote folder ' + inPath + ' --> ' + err);
                         cb(err);
@@ -161,7 +161,7 @@ module.exports = function (grunt) {
                     log.error(err);
                 } else {
                     if (files.length === 0) {
-                        ftp.raw.rmd(dirPath, function (err) {
+                        ftp.raw( "rmd", dirPath, function (err) {
                             if (err) {
                                 grunt.fail.fatal('Error deleting directory: ' + dirPath + ' -- ' + err);
                                 callback();
@@ -244,7 +244,7 @@ module.exports = function (grunt) {
     }
 
     function removeFile(filePath, callback) {
-        ftp.raw.dele(filePath, function (err) {
+        ftp.raw( "dele", filePath, function (err) {
             if (err) {
                 grunt.fail.fatal('Error deleting file: ' + filePath.red + ' -- ' + err);
                 callback();
@@ -381,7 +381,7 @@ module.exports = function (grunt) {
 
                 // Iterating through all location from the `localRoot` in parallel
                 async.eachSeries(locations, ftpProcessLocation, function () {
-                    ftp.raw.quit(function (err) {
+                    ftp.raw("quit", function (err) {
                         if (err) {
                             log.error(err);
                         } else {
