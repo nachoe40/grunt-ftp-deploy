@@ -63,6 +63,7 @@ The parameters in our configuration are:
 - **authKey** - a key for looking up credentials saved in a file (see next section). If no value is defined, the `host` parameter will be used
 - **src** - the source location, the local folder that we are transferring to the server
 - **dest** - the destination location, the folder on the server we are deploying to
+- **destSep** - optional - the path separator used on the destination location, default `/`
 - **exclusions** - an optional parameter allowing us to exclude files and folders by utilizing grunt's support for [minimatch](https://github.com/isaacs/minimatch). The `matchBase` minimatch option is enabled, so `.git*` would match the path `/foo/bar/.gitignore`.
 - **forceVerbose** - if set to `true` forces the output verbosity.
 - **forceUpload** - if set to `true` forces the upload of all files avoiding the time stamp and file size check.
