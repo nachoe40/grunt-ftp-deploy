@@ -68,6 +68,8 @@ The parameters in our configuration are:
 - **forceUpload** - if set to `true` forces the upload of all files avoiding the time stamp and file size check.
 - **syncMode** - if set to `true` deletes extra files and folders in destination.
 - **keep** - an optional parameter to keep files or folders in destination that are not present in source (only used in syncMode). It uses the grunt's support for [minimatch](https://github.com/isaacs/minimatch). The `matchBase` minimatch option is enabled, so `.git*` would match the path `/foo/bar/.gitignore`.
+- **destTimeAdjustmentMinutes** - an optional parameter to set the time difference in minutes between the host and the remote for when the host and the remote are in different time zones.  Example: `destTimeAdjustmentMinutes: -600` allows for a -10 hour time difference. 
+
 
 ## Authentication parameters
 
