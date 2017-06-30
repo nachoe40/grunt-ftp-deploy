@@ -35,6 +35,9 @@ module.exports = function (grunt) {
     var syncMode;
     var destSep;
     var destTimeAdjustmentMinutes;
+    var countFilesChecked =0;
+    var countFilesUploaded = 0;
+    var countFilesDeleted = 0;
 
     // A method for parsing the source location and storing the information into a suitably formated object
     function dirParseSync(startDir, result) {
@@ -80,9 +83,9 @@ module.exports = function (grunt) {
 
     // A method for changing the remote working directory and creating one if it doesn't already exist
     function ftpCwd(inPath, cb) {
-        ftp.raw( "cwd", inPath, function (err) {
+        ftp.raw("cwd", inPath, function (err) {
             if (err) {
-                ftp.raw( "mkd", inPath, function (err) {
+                ftp.raw("mkd", inPath, function (err) {
                     if (err) {
                         grunt.fail.fatal('Error creating new remote folder ' + inPath + ' --> ' + err);
                         cb(err);
@@ -112,6 +115,8 @@ module.exports = function (grunt) {
     function ftpPut(inFilename, done) {
         var fpath = path.normalize(localRoot + path.sep + currPath + path.sep + inFilename);
         var fileInfo;
+
+        countFilesChecked++;
         // Check filesize and timestamp to determine if it was changed
         if (!forceUpload) {
 
@@ -141,6 +146,7 @@ module.exports = function (grunt) {
                 log.error('Cannot upload file: ' + inFilename + ' --> ' + err);
                 done(err);
             } else {
+                countFilesUploaded++;
                 if (forceVerbose) {
                     log.ok('Uploaded file: ' + inFilename.green + ' to: ' + currPath.yellow);
                 } else {
@@ -151,17 +157,20 @@ module.exports = function (grunt) {
         });
     }
 
-    // A method for deleting a dir
-    var rootPath;
-
+    /**
+     * A method for deleting a dir
+     * @param dirPath - path to remove
+     * @param callback
+     */
     function removeDir(dirPath, callback) {
+        var rootPath;
         ftpCwd(dirPath, function (err) {
             ftpLs(dirPath, function (err, files) {
                 if (err) {
                     log.error(err);
                 } else {
                     if (files.length === 0) {
-                        ftp.raw( "rmd", dirPath, function (err) {
+                        ftp.raw("rmd", dirPath, function (err) {
                             if (err) {
                                 grunt.fail.fatal('Error deleting directory: ' + dirPath + ' -- ' + err);
                                 callback();
@@ -191,6 +200,13 @@ module.exports = function (grunt) {
         return str.replace(/[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
     }
 
+    /**
+     * function to replace all occurrences in a string until it no longer exists
+     * @param target
+     * @param search
+     * @param replacement
+     * @returns {string}
+     */
     function replaceAll(target, search, replacement) {
         if (search != replacement) {
             while (target.indexOf(search) != -1) {
@@ -222,7 +238,8 @@ module.exports = function (grunt) {
     function destPathJoin(a) {
         var finalPath = "";
         var args = Array.prototype.slice.call(arguments);
-        args.forEach(function (arg, index) {
+
+        args.forEach(function(arg, index) {
             if (index == 0) {
                 finalPath = arg;
             } else {
@@ -244,11 +261,12 @@ module.exports = function (grunt) {
     }
 
     function removeFile(filePath, callback) {
-        ftp.raw( "dele", filePath, function (err) {
+        ftp.raw("dele", filePath, function (err) {
             if (err) {
                 grunt.fail.fatal('Error deleting file: ' + filePath.red + ' -- ' + err);
                 callback();
             } else {
+                countFilesDeleted++;
                 if (forceVerbose) {
                     log.ok('Deleted file: ' + filePath.red);
                 } else {
@@ -386,6 +404,7 @@ module.exports = function (grunt) {
                             log.error(err);
                         } else {
                             log.ok('FTP upload done!');
+                            log.ok(`Files checked: ${countFilesChecked}, uploaded ${countFilesUploaded}, deleted ${countFilesDeleted}`);
                         }
                         done();
                     });
